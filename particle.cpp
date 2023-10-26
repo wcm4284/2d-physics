@@ -1,30 +1,29 @@
 #include <SFML/Graphics.hpp>
 
-class Particle : public sf::Transformable {
-    struct {
-        float x_, y_;
-    } pos_, vel_, acc_;
+struct Particle : public sf::Transformable {
 
-    float mass_, radius_;
+    sf::Vector2f pos, vel, acc;
+
+
+    float mass, radius;
 
     Particle() {
-        vel_.x_ = 0;
-        vel_.y_ = 0;
-        acc_.x_ = 0;
-        acc_.y_ = 0;
-        radius_ = 1;
-        mass_ = 1;
+        vel.x = 0;
+        vel.y = 0;
+        acc.x = 0;
+        acc.y = 0;
+        mass = 1;
     }
-
+    
     Particle(float x, float y) {
-        pos_.x_ = x;
-        pos_.y_ = y;
+        pos.x = x;
+        pos.y = y;
         Particle();
     }
-
+    
     Particle(float x, float y, float mass, float radius) {
-        radius_ = radius;
-        mass_ = mass;
         Particle(x, y);
+        radius = radius;
+        mass = mass;
     }
 };
