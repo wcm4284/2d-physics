@@ -3,7 +3,6 @@
 
 int main()
 {
-    std::cout << "HEllo world" << std::endl;
     sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!");
     sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);

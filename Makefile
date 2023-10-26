@@ -5,5 +5,5 @@ compile:
 link:
   g++ *.o -o main -LC:\SFML-2.6.0\bin -lsfml-graphics -lsfml-window -lsfml-system
 clean:
-  del *.o
-  del *.exe
+  rm *.o
+  rm *.exe
