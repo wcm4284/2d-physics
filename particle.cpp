@@ -27,4 +27,4 @@ class Particle : public sf::Transformable {
         mass_ = mass;
         Particle(x, y);
     }
-}
+};
