@@ -2,21 +2,26 @@
 #include <iostream>
 #include "particle.cpp"
 
-int c_NUMENTITIES = 100;
+const int c_numentities = 1, c_screenwidth = 1280, c_screenheight = 720;
+const float c_framerate = 60.f;
+const float c_timestep = 1 / c_framerate;
 
+
+
+void updatePos(sf::Vector2f &pos) {
+    pos.x += 1;
+    pos.y += 1;
+}
 
 int main() {
-    Particle entities[c_NUMENTITIES];
+    particle entities[c_numentities];
 
-    for (int i = 0; i < c_NUMENTITIES; ++i) {
-        entities[i] = * (new Particle(i + 2, i + 2, 1, 50));
+    for (int i = 0; i < c_numentities; ++i) {
+        entities[i] = * (new particle(100, 100, 1, 5));
     }
     
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "Physics Engine");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-
-    
+    sf::RenderWindow window(sf::VideoMode(c_screenwidth, c_screenheight), "Physics Engine");
+    window.setFramerateLimit(c_framerate);
 
     while (window.isOpen())
     {
@@ -27,15 +32,21 @@ int main() {
 
         window.clear();
 
-        for (int i = 0; i < c_NUMENTITIES; i++) {
-            sf::CircleShape shape(entities[i].radius);
-            shape.move(entities[i].pos.x, entities[i].pos.y);
-            shape.setFillColor(sf::Color::Green);
-            window.draw(shape);
+        for (particle entity1 : entities) {
+            entity1.pos->x += entity1.vel->x;
+            entity1.pos->y += entity1.vel->y;
+            entity1.drawable.setPosition(*entity1.pos);
+            for (particle entity2: entities) {
+                if (&entity1 == &entity2) continue;
+            }
+            window.draw(entity1.drawable);
         }
+
         window.display();
+
     }
 
     return 0;
 }
+
 
