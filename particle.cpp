@@ -1,29 +1,27 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
-struct Particle : public sf::Transformable {
+typedef struct Particle : public sf::Transformable {
 
-    sf::Vector2f pos, vel, acc;
+    sf::Vector2f *pos = new sf::Vector2f();
+    sf::Vector2f *vel = new sf::Vector2f();
+    sf::Vector2f *acc = new sf::Vector2f();
+    sf::CircleShape drawable;
+    float mass;
 
+    Particle() {};
 
-    float mass, radius;
-
-    Particle() {
-        vel.x = 0;
-        vel.y = 0;
-        acc.x = 0;
-        acc.y = 0;
-        mass = 1;
-    }
-    
-    Particle(float x, float y) {
-        pos.x = x;
-        pos.y = y;
-        Particle();
-    }
-    
     Particle(float x, float y, float mass, float radius) {
-        Particle(x, y);
-        radius = radius;
+        if ( ! pos || ! vel || ! acc ) {
+            // figure out how to handle errors!
+            return;
+        }
+        pos->x = x; pos->y = y;
+        drawable.setFillColor(sf::Color::White);
+        drawable.setRadius(radius);
+        drawable.setPosition(*pos);
+        vel->x = 1; vel->y = -1;
         mass = mass;
     }
-};
+
+} particle;
