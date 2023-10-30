@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
 
 typedef struct Particle : public sf::Transformable {
 
@@ -17,10 +16,11 @@ typedef struct Particle : public sf::Transformable {
             return;
         }
         pos->x = x; pos->y = y;
+        vel->x = 0; vel->y = 0;
+        acc->x = 0; acc->y = 0;
         drawable.setFillColor(sf::Color::White);
         drawable.setRadius(radius);
         drawable.setPosition(*pos);
-        vel->x = 1; vel->y = -1;
         mass = mass;
     }
 
