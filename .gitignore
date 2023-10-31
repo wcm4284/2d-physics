@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# adding this for fun!
+*.json
