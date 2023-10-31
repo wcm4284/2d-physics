@@ -4,6 +4,7 @@
 extern const int c_screenheight;
 extern const int c_screenwidth;
 extern const float g;
+extern const float collisionDamp;
 
 typedef struct Particle : public sf::Transformable {
 
@@ -36,10 +37,10 @@ typedef struct Particle : public sf::Transformable {
 
     void resolveWallCollision() {
         if (pos->x + radius > c_screenwidth || pos->x - radius < 0) {
-            vel->x = -vel->x;
+            vel->x = -vel->x * (1 - collisionDamp);
         }
         if (pos->y + radius > c_screenheight || pos->y - radius < 0) {
-            vel->y = -vel->y;
+            vel->y = -vel->y * (1 - collisionDamp);
         }
     }
     int resolveCollision(Particle &other) {

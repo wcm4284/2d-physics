@@ -5,17 +5,18 @@
 #include "particle.cpp"
 
 // num entities should be divisible by numrows
-const int c_numentities = 20, c_screenwidth = 3800, c_screenheight = 2400;
+const int c_numentities = 500, c_screenwidth = 3800, c_screenheight = 2000;
 const int c_numrows = 20;
 const float c_framerate = 60.f;
 const float c_timestep = 1 / c_framerate;
-const float g = 9.8;
+const float g = -9.8 * 5;
+const float collisionDamp = 0.1;
 
 
 
 int main() {
     particle entities[c_numentities];
-    int radius = 3;
+    int radius = 10;
     /* THERE WILL BE MULTIPLE WAYS TO INSTANTIATE OBJECTS
     *  ONE WILL BE TO CREATE THEM IN ROWS AND APPLY A 
     *  SMALL RANDOM FORCE AT THE START, ANOTHER WILL BE 
@@ -35,7 +36,7 @@ int main() {
 
     //method 2, point in space
     int currIndex = 0;
-    sf::Vector2f origin = { 100, 100 };
+    sf::Vector2f origin = { 50 , 50 };
     
     sf::RenderWindow window(sf::VideoMode(c_screenwidth, c_screenheight), "2D Physics Engine");
     window.setFramerateLimit(c_framerate);
@@ -51,32 +52,32 @@ int main() {
         window.clear();
 
         // method 2 continued, origin point
-        srand (time(NULL));
-        float randOffsetY = rand() % 5; 
-        float randOffsetX = rand() % 5;
-        if (currIndex == 0 || (currIndex != c_numentities && entities[currIndex - 1].getDistance(origin) > 2 * radius)) { 
+        srand (currIndex);
+        float randOffsetY = rand() % 20 + 1; 
+        float randOffsetX = rand() % 20 + randOffsetY;
+        if (currIndex == 0 || (currIndex != c_numentities && (entities[currIndex - 1].getDistance(origin) > 2 * radius))) { 
             entities[currIndex] =  * (new particle(origin.x + randOffsetX, origin.y + randOffsetY, 1, radius));
+            entities[currIndex++].vel->x = randOffsetX * radius;
         }
 
-        for (particle entity1 : entities) {
-            if ( ! entity1.pos ) continue;
+
+        for (int i = 0; i < currIndex; ++i) {
+
             // CHECK ENTITY WITHIN BOUNDS
-            entity1.resolveWallCollision();
+            entities[i].resolveWallCollision();
 
-            for (particle entity2: entities) {
-                if (! entity2.pos );
-                if (&entity1 == &entity2) continue;
-
+            for (int j = i + 1; j < currIndex; ++j) {
+               
                 // RESOLVE COLLISIONS
-                entity1.resolveCollision(entity2);
+                entities[i].resolveCollision(entities[j]);
             }
             // UPDATE VELOCITY AND POSITION
-            *entity1.vel += *entity1.acc * c_timestep;
-            *entity1.pos += *entity1.vel * c_timestep;
-            entity1.drawable.setPosition(*entity1.pos);
+            *entities[i].vel += *entities[i].acc * c_timestep * (1 - collisionDamp);
+            *entities[i].pos += *entities[i].vel * c_timestep;
+            entities[i].drawable.setPosition(*entities[i].pos);
 
             // DRAW
-            window.draw(entity1.drawable);
+            window.draw(entities[i].drawable);
         }
 
         window.display();
