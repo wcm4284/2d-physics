@@ -42,19 +42,24 @@ typedef struct Particle : public sf::Transformable {
             vel->y = -vel->y;
         }
     }
-    void resolveCollision(Particle &other) {
-        float dst, x, y;
-        x = pos->x - other.pos->x;
-        y = pos->y - other.pos->y;
-        dst = sqrtf((x * x) + (y * y));
+    int resolveCollision(Particle &other) {
+        float dst = getDistance(*other.pos);
         if (dst < radius + other.radius) {
             calculateForce(other);
+            return 1;
         }
+        return 0;
     }
 
     void calculateForce(Particle &other) {}
 
     void applyForce(Particle &other) {}
-        
+    
+    float getDistance(sf::Vector2f &point) {
+        float x, y;
+        x = pos->x - point.x;
+        y = pos->y - point.y;
+        return sqrtf((x * x) + (y * y));
+    }
 
 } particle;
