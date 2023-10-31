@@ -5,18 +5,18 @@
 #include "particle.cpp"
 
 // num entities should be divisible by numrows
-const int c_numentities = 500, c_screenwidth = 3800, c_screenheight = 2000;
+const int c_numentities = 1000, c_screenwidth = 3800, c_screenheight = 2000;
 const int c_numrows = 20;
 const float c_framerate = 60.f;
 const float c_timestep = 1 / c_framerate;
 const float g = -9.8 * 5;
-const float collisionDamp = 0.1;
+const float collisionDamp = 0.f;
 
 
 
 int main() {
     particle entities[c_numentities];
-    int radius = 10;
+    int radius = 15;
     /* THERE WILL BE MULTIPLE WAYS TO INSTANTIATE OBJECTS
     *  ONE WILL BE TO CREATE THEM IN ROWS AND APPLY A 
     *  SMALL RANDOM FORCE AT THE START, ANOTHER WILL BE 
@@ -53,11 +53,15 @@ int main() {
 
         // method 2 continued, origin point
         srand (currIndex);
-        float randOffsetY = rand() % 20 + 1; 
-        float randOffsetX = rand() % 20 + randOffsetY;
-        if (currIndex == 0 || (currIndex != c_numentities && (entities[currIndex - 1].getDistance(origin) > 2 * radius))) { 
+        float randOffsetY = rand() % 20; 
+        float randOffsetX = rand() % 20;
+        if (currIndex == 0 || (currIndex != c_numentities && entities[currIndex - 1].getDistance(origin) >= 2 * radius)) { 
             entities[currIndex] =  * (new particle(origin.x + randOffsetX, origin.y + randOffsetY, 1, radius));
-            entities[currIndex++].vel->x = randOffsetX * radius;
+            entities[currIndex].vel->x = ((randOffsetX - 10) * radius * 3) != 0 ? 
+                (randOffsetX - 10) * radius * 3 : (randOffsetY - 10) * radius * 3;
+            entities[currIndex++].vel->y = ((randOffsetY - 10) * radius * 3) != 0 ? 
+                (randOffsetY - 10) * radius * 3 : (randOffsetX - 10) * radius * 3;
+            
         }
 
 
