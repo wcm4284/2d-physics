@@ -36,20 +36,18 @@ typedef struct Particle : public sf::Transformable {
     }
 
     void resolveWallCollision() {
-        if (pos->x + radius > c_screenwidth || pos->x - radius < 0) {
+        if (pos->x + radius >= c_screenwidth || pos->x - radius <= 0) {
             vel->x = -vel->x * (1 - collisionDamp);
         }
-        if (pos->y + radius > c_screenheight || pos->y - radius < 0) {
+        if (pos->y + radius >= c_screenheight || pos->y - radius <= 0) {
             vel->y = -vel->y * (1 - collisionDamp);
         }
     }
-    int resolveCollision(Particle &other) {
+    void resolveCollision(Particle &other) {
         float dst = getDistance(*other.pos);
         if (dst < radius + other.radius) {
             calculateForce(other);
-            return 1;
         }
-        return 0;
     }
 
     void calculateForce(Particle &other) {}
