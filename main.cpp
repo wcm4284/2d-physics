@@ -5,18 +5,18 @@
 #include "particle.cpp"
 
 // num entities should be divisible by numrows
-const int c_numentities = 1000, c_screenwidth = 3800, c_screenheight = 2000;
+const int c_numentities = 2000, c_screenwidth = 3800, c_screenheight = 2000;
 const int c_numrows = 20;
 const float c_framerate = 60.f;
 const float c_timestep = 1 / c_framerate;
-const float g = -9.8 * 5;
-const float collisionDamp = 0.f;
+const float g = 9.8 * 20;
+const float collisionDamp = 0.01f;
 
 
 
 int main() {
     particle entities[c_numentities];
-    int radius = 15;
+    int radius = 5;
     /* THERE WILL BE MULTIPLE WAYS TO INSTANTIATE OBJECTS
     *  ONE WILL BE TO CREATE THEM IN ROWS AND APPLY A 
     *  SMALL RANDOM FORCE AT THE START, ANOTHER WILL BE 
@@ -57,30 +57,34 @@ int main() {
         float randOffsetX = rand() % 20;
         if (currIndex == 0 || (currIndex != c_numentities && entities[currIndex - 1].getDistance(origin) >= 2 * radius)) { 
             entities[currIndex] =  * (new particle(origin.x + randOffsetX, origin.y + randOffsetY, 1, radius));
-            entities[currIndex].vel->x = ((randOffsetX - 10) * radius * 3) != 0 ? 
-                (randOffsetX - 10) * radius * 3 : (randOffsetY - 10) * radius * 3;
-            entities[currIndex++].vel->y = ((randOffsetY - 10) * radius * 3) != 0 ? 
-                (randOffsetY - 10) * radius * 3 : (randOffsetX - 10) * radius * 3;
+            entities[currIndex].vel->x = ((randOffsetX - 10) * radius * (20 - radius)) != 0 ? 
+                (randOffsetX - 10) * radius * (20 - radius) : (randOffsetY - 10) * radius * (20 - radius);
+            entities[currIndex++].vel->y = ((randOffsetY - 10) * radius * (20 - radius)) != 0 ? 
+                (randOffsetY - 10) * radius * (20 - radius) : (randOffsetX - 10) * radius * (20 - radius);
             
         }
 
 
-        for (int i = 0; i < currIndex; ++i) {
+        for (int i = 0; i < currIndex; i++) {
 
             // CHECK ENTITY WITHIN BOUNDS
             entities[i].resolveWallCollision();
 
-            for (int j = i + 1; j < currIndex; ++j) {
+            for (int j = i + 1; j < currIndex; j++) {
                
                 // RESOLVE COLLISIONS
                 entities[i].resolveCollision(entities[j]);
+
             }
             // UPDATE VELOCITY AND POSITION
-            *entities[i].vel += *entities[i].acc * c_timestep * (1 - collisionDamp);
+            *entities[i].vel += *entities[i].acc * c_timestep;
             *entities[i].pos += *entities[i].vel * c_timestep;
             entities[i].drawable.setPosition(*entities[i].pos);
 
             // DRAW
+            unsigned int shade = entities[i].getMagnitude(*entities[i].vel) / 5;
+            shade = shade > 255 ? 255 : shade;
+            entities[i].drawable.setFillColor(sf::Color(0, shade, (255 - shade), 255));
             window.draw(entities[i].drawable);
         }
 
