@@ -3,10 +3,10 @@
 #include <iostream>
 
 
-extern const int c_screenheight;
-extern const int c_screenwidth;
+extern int c_screenheight;
+extern int c_screenwidth;
 extern const float g;
-extern const float collisionDamp;
+//extern const float collisionDamp;
 
 typedef struct Particle : public sf::Transformable {
 
@@ -20,13 +20,10 @@ typedef struct Particle : public sf::Transformable {
     Particle() {};
 
     Particle(float x, float y, float mass, float radius) {
-    pos = new sf::Vector2f();
-    vel = new sf::Vector2f();
-    acc = new sf::Vector2f();
-        if ( ! pos || ! vel || ! acc ) {
-            // figure out how to handle errors!
-            return;
-        }
+        pos = new sf::Vector2f();
+        vel = new sf::Vector2f();
+        acc = new sf::Vector2f();
+        
         pos->x = x; pos->y = y;
         vel->x = 0; vel->y = 0;
         acc->x = 0; acc->y = g;
@@ -37,12 +34,16 @@ typedef struct Particle : public sf::Transformable {
         this->mass = mass;
     }
 
-    void resolveWallCollision() {
-        if (pos->x + radius >= c_screenwidth || pos->x - radius <= 0) {
-            vel->x = -vel->x * (1 - collisionDamp);
+    void resolveWallCollision(float offset) {
+        if (pos->x + radius >= c_screenwidth - offset) {
+            vel->x = -abs(vel->x);
+        } else if (pos->x - radius <= offset) {
+            vel->x = abs(vel->x);
         }
-        if (pos->y + radius >= c_screenheight || pos->y - radius <= 0) {
-            vel->y = -vel->y * (1 - collisionDamp);
+        if (pos->y + radius >= c_screenheight - offset) {
+            vel->y = -abs(vel->y);
+        } else if (pos->y - radius <= offset) {
+            vel->y = abs(vel->y);
         }
     }
 
@@ -84,9 +85,6 @@ typedef struct Particle : public sf::Transformable {
 
         *vel = normalVec1 + tangentVec1;
         *other.vel = normalVec2 + tangentVec2;
-
-        *vel *= (1 - collisionDamp);
-        *other.vel *= (1 - collisionDamp);
     }
     
     float getDistance(sf::Vector2f &point) {
