@@ -2,16 +2,15 @@
 #include <iostream>
 #include <stdlib.h>
 #include <cmath>
+#include <vector>
 #include "particle.cpp"
 #include "gravitySource.hpp"
-#include <vector>
 
 int c_numentities = 100, c_screenwidth = 3850, c_screenheight = 2300;
 const float c_framerate = 60.f;
 const float c_timestep = 1 / c_framerate;
 const float g = 9.8;
 const float univG = 500;
-//const float collisionDamp = 0.00f;
 const float offset = 200.f;
 const float maxVelocity = 500;
 const float mouseMass = 2000;
@@ -61,7 +60,7 @@ int main() {
                 bool colliding = false;
                 for (gravity_source_t oldSrc : sources) {
                     // check collisions before pushback
-                    colliding = checkCollisions(newSource, oldSrc) || colliding;
+                    colliding = checkCollision(newSource, oldSrc) || colliding;
                 }
                 if (!colliding) sources.push_back(newSource);
             }

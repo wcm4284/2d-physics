@@ -1,3 +1,6 @@
+#ifndef PARTICLE_CPP
+#define PARTICLE_CPP
+
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
@@ -7,9 +10,8 @@
 extern int c_screenheight;
 extern int c_screenwidth;
 extern const float g;
-//extern const float collisionDamp;
 
-typedef struct Particle : public sf::Transformable {
+typedef struct Particle {
 
     sf::Vector2f *pos;
     sf::Vector2f *vel;
@@ -140,3 +142,5 @@ typedef struct Particle : public sf::Transformable {
     }
 
 } particle;
+
+#endif

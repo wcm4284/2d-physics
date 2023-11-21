@@ -15,7 +15,7 @@ typedef struct {
 void applyGravity(gravity_source_t &src, Particle &dst);
 
 // check collisions with other sources to avoid creating sources on top of each other
-void checkCollision(gravity_source_t &src1, gravity_source_t &src2);
+bool checkCollision(gravity_source_t &src1, gravity_source_t &src2);
 
 float getDistance(sf::Vector2f &point1, sf::Vector2f &point2);
 
