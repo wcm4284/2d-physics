@@ -1,89 +1,63 @@
-#ifndef PARTICLE_CPP
-#define PARTICLE_CPP
-
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
-#include "gravitySource.hpp"
+#include "particle.h"
 
+extern float screenHeight;
+extern float screenWidth;
+extern float g;
 
-extern int c_screenheight;
-extern int c_screenwidth;
-extern const float g;
+float getDistance(sf::Vector2f &p1, sf::Vector2f &p2) {
+    float x, y;
+    x = p1.x - p2.x;
+    y = p1.y - p2.y;
+    return sqrt((x * x) + (y * y));
+}
 
-typedef struct Particle {
+float getMagnitude(sf::Vector2f &vec) {
+    return sqrt(vec.x * vec.x + vec.y * vec.y);
+}
 
-    sf::Vector2f *pos;
-    sf::Vector2f *vel;
-    sf::Vector2f *acc;
-    sf::CircleShape drawable;
-    float radius;
-    float mass;
+float dotProduct(sf::Vector2f &vec1, sf::Vector2f &vec2) {
+    return vec1.x * vec2.x + vec1.y * vec2.y;
+}
 
-    Particle() {};
-
-    Particle(float x, float y, float mass, float radius) {
-        pos = new sf::Vector2f();
-        vel = new sf::Vector2f();
-        acc = new sf::Vector2f();
-        
-        pos->x = x; pos->y = y;
-        vel->x = 0; vel->y = 0;
-        acc->x = 0; acc->y = g;
-        drawable.setFillColor(sf::Color::White);
-        drawable.setRadius(radius);
-        drawable.setPosition(*pos);
-        this->radius = radius;
-        this->mass = mass;
+void resolveWallCollision(particle_t &p, const float offset) {
+    if (p.pos->x + p.ir > screenWidth - offset) {
+        p.vel->x = -abs(p.vel->x);
+    } else if (p.pos->x + p.ir < offset) {
+        p.vel->x = abs(p.vel->x);
     }
-
-    void resolveWallCollision(float offset) {
-        if (pos->x + radius >= c_screenwidth - offset) {
-            vel->x = -abs(vel->x);
-        } else if (pos->x - radius <= offset) {
-            vel->x = abs(vel->x);
-        }
-        if (pos->y + radius >= c_screenheight - offset) {
-            vel->y = -abs(vel->y);
-        } else if (pos->y - radius <= offset) {
-            vel->y = abs(vel->y);
-        }
+    if (p.pos->y + p.ir > screenHeight - offset) {
+        p.vel->y = -abs(p.vel->y);
+    } else if (p.pos->y + p.ir < offset) {
+        p.vel->y = abs(p.vel->y);
     }
+}
 
-    void resolveCollision(Particle &other) {
-        float dst = getDistance(*other.pos);
-        if (dst < radius + other.radius) {
-            calculateResultantVelocities(other);
-        }
+void resolveParticleCollision(particle_t &p1, particle_t &p2) {
+    if (getDistance(*p1.pos, *p2.pos) < p1.ir + p2.ir) {
+        calculateNewVelocities(p1, p2);
     }
+}
 
-    void resolveCollision(gravity_source_t &other) {
-        float dst = getDistance(*other.pos);
-        if (dst < radius + other.drawable.getRadius()) {
-            calculateResultantVelocities(other);
-        }
-    }
-
-
-    // this process comes from https://www.vobarian.com/collisions/2dcollisions2.pdf, credit to the author
-
-    void calculateResultantVelocities(Particle &other) {
-        float normal1, tangent1, normal2, tangent2; 
-        sf::Vector2f unitNormal = { pos->x - other.pos->x, pos->y - other.pos->y };
+void calculateNewVelocities(particle_t &p1, particle_t &p2) {
+    float normal1, tangent1, normal2, tangent2; 
+        sf::Vector2f unitNormal = { p1.pos->x - p2.pos->x, p1.pos->y - p2.pos->y };
 
         unitNormal /= getMagnitude(unitNormal);
 
         sf::Vector2f unitTangent = {-unitNormal.y, unitNormal.x};
 
-        normal1 = dotProduct(*vel, unitNormal);
-        normal2 = dotProduct(*other.vel, unitNormal);
-        tangent1 = dotProduct(*vel, unitTangent);
-        tangent2 = dotProduct(*other.vel, unitTangent); 
+        normal1 = dotProduct(*p1.vel, unitNormal);
+        normal2 = dotProduct(*p2.vel, unitNormal);
+        tangent1 = dotProduct(*p1.vel, unitTangent);
+        tangent2 = dotProduct(*p2.vel, unitTangent); 
 
         float newNormal1, newNormal2; 
 
-        newNormal1 = (normal1 * (mass - other.mass) + (2 * other.mass * normal2)) / (mass + other.mass);
-        newNormal2 = (normal2 * (other.mass - mass) + (2 * mass * normal1)) / (mass + other.mass);
+        newNormal1 = (normal1 * (p1.im - p2.im) + (2 * p2.im * normal2)) / (p1.im + p2.im);
+        newNormal2 = (normal2 * (p2.im - p1.im) + (2 * p1.im * normal1)) / (p1.im + p2.im);
 
         sf::Vector2f normalVec1, normalVec2, tangentVec1, tangentVec2;
 
@@ -93,54 +67,27 @@ typedef struct Particle {
         tangentVec2 = {tangent2 * unitTangent.x, tangent2 * unitTangent.y};
 
 
-        *vel = normalVec1 + tangentVec1;
-        *other.vel = normalVec2 + tangentVec2;
-    }
+        *p1.vel = normalVec1 + tangentVec1;
+        *p2.vel = normalVec2 + tangentVec2;
+}
 
+particle_t create(float x, float y, float mass, float radius) {
+    particle_t ptl;
 
-    // same process as above repeated for gravity_source_t
-    void calculateResultantVelocities(gravity_source_t &other) {
-        float normal1, tangent1, normal2, tangent2; 
-        sf::Vector2f unitNormal = { pos->x - other.pos->x, pos->y - other.pos->y };
+    ptl.pos = (sf::Vector2f*) malloc(sizeof(sf::Vector2f));
+    ptl.vel = (sf::Vector2f*) malloc(sizeof(sf::Vector2f));
+    ptl.acc = (sf::Vector2f*) malloc(sizeof(sf::Vector2f));
 
-        unitNormal /= getMagnitude(unitNormal);
+    *ptl.pos = {x, y};
+    ptl.im = mass;
+    ptl.ir = radius;
 
-        sf::Vector2f unitTangent = {-unitNormal.y, unitNormal.x};
+    *ptl.vel = {0, 0};
+    *ptl.acc = {0, g};
 
-        sf::Vector2f otherVel = {0, 0};
+    ptl.drawable.setRadius(radius);
+    ptl.drawable.setFillColor(sf::Color::Blue);
+    ptl.drawable.setPosition(*ptl.pos);
 
-        normal1 = dotProduct(*vel, unitNormal);
-        normal2 = dotProduct(otherVel, unitNormal);
-        tangent1 = dotProduct(*vel, unitTangent);
-
-        float newNormal1, newNormal2; 
-
-        newNormal1 = (normal1 * (mass - other.iMass) + (2 * other.iMass * normal2)) / (mass + other.iMass);
-
-        sf::Vector2f normalVec1, tangentVec1;
-
-        normalVec1 = {newNormal1 * unitNormal.x, newNormal1 * unitNormal.y};
-        tangentVec1 = {tangent1 * unitTangent.x, tangent1 * unitTangent.y};
-
-
-        *vel = normalVec1 + tangentVec1;
-    }
-    
-    float getDistance(sf::Vector2f &point) {
-        float x, y;
-        x = pos->x - point.x;
-        y = pos->y - point.y;
-        return sqrtf((x * x) + (y * y));
-    }
-
-    float getMagnitude(sf::Vector2f &vector) {
-        return sqrt(vector.x * vector.x + vector.y * vector.y);
-    }
-
-    float dotProduct(sf::Vector2f &vector1, sf::Vector2f &vector2) {
-        return vector1.x * vector2.x + vector1.y * vector2.y;
-    }
-
-} particle;
-
-#endif
+    return ptl;
+}

@@ -13,7 +13,7 @@ typedef struct {
 
 } particle_t;
 
-float getDistance(particle_t &p1, particle_t &p2);
+float getDistance(sf::Vector2f &p1, sf::Vector2f &p2);
 
 float getMagnitude(sf::Vector2f &vec);
 
@@ -24,5 +24,7 @@ void resolveWallCollision(particle_t &p, const float offset);
 void resolveParticleCollision(particle_t &p1, particle_t &p2);
 
 void calculateNewVelocities(particle_t &p1, particle_t &p2);
+
+particle_t create(float x, float y, float mass, float radius);
 
 #endif
