@@ -51,7 +51,7 @@ int main()
 
         srand(currIndex);
 
-        if (currIndex == 0 || (getDistance(origin, *ptls[currIndex - 1].pos) < radius + ptls[currIndex - 1].ir && currIndex != numEntities)) {
+        if (currIndex == 0 || (getDistance(origin, *ptls[currIndex - 1].pos) > radius + ptls[currIndex - 1].ir && currIndex != numEntities)) {
             ptls[currIndex] = create(origin.x, origin.y, 1, radius);
             ptls[currIndex].vel->x = (rand() % 20 + 5) * 20;
             ptls[currIndex++].vel->y = (rand() % 3 + 1) * 20;
@@ -59,9 +59,11 @@ int main()
 
 
         for (int i = 0; i < currIndex; i++) {
+
             resolveWallCollision(ptls[i], offset);
 
             for (int j = i + 1; j < currIndex; j++) {
+
                 resolveParticleCollision(ptls[i], ptls[j]);
 
             }
