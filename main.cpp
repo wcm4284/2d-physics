@@ -14,7 +14,7 @@ float timestep = 1 / framerate;
 float offset = 200;
 int numEntities = 100;
 float g = 9.8;
-float maxVelocity = 500;
+float maxVelocity = 300;
 
 int main()
 {
@@ -86,7 +86,13 @@ int main()
             }
 
             if (!gsrcs.empty()) {
+
+                *ptls[i].acc = {0, 0};
+
+                int j = 0;
+
                 for (grav_source_t src : gsrcs) {
+
                     applyGravity(ptls[i], src);
 
                     // might as well draw while we are here

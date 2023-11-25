@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "particle.h"
 
-const int universalGrav = 200;
+const int universalGrav = 500;
 
 typedef struct {
     sf::Vector2f *pos;
