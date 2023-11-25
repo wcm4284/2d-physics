@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
+#include <vector>
 #include <iostream>
 #include "particle.h"
 #include "gravity_source.h"
@@ -18,6 +19,7 @@ float maxVelocity = 500;
 int main()
 {
     particle_t ptls[numEntities];
+    std::vector<grav_source_t> gsrcs;
     int radius = 5;
 
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "2D Engine");
@@ -45,6 +47,19 @@ int main()
         {
             if (event.type == sf::Event::Closed) window.close();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                grav_source_t newSource = create(mousePos.x, mousePos.y, 2000, radius * 10);
+                if (gsrcs.empty()) {
+                    gsrcs.push_back(newSource);
+                } else {
+                    bool include = true;
+                    for (grav_source_t oldSrc : gsrcs) {
+                        include = !detectCollision(oldSrc, newSource) && include;
+                    }
+                    if (include) gsrcs.push_back(newSource);
+                }
+            }
         }
 
         window.clear();
@@ -70,6 +85,16 @@ int main()
 
             }
 
+            if (!gsrcs.empty()) {
+                for (grav_source_t src : gsrcs) {
+                    applyGravity(ptls[i], src);
+
+                    // might as well draw while we are here
+                    // side effect of this is that if collision occur, this will be drawn under particles
+                    window.draw(src.drawable);
+                }
+            }
+
             // update velocity 
             *ptls[i].vel += (*ptls[i].acc * timestep);
 
@@ -88,6 +113,8 @@ int main()
             window.draw(ptls[i].drawable);
 
         }
+
+        
         
         window.display();
 

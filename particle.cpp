@@ -36,7 +36,7 @@ void resolveWallCollision(particle_t &p, const float offset) {
 }
 
 void resolveParticleCollision(particle_t &p1, particle_t &p2) {
-    if (getDistance(*p1.pos, *p2.pos) < p1.ir + p2.ir) {
+    if (getDistance(*p1.pos, *p2.pos) <= p1.ir + p2.ir) {
         calculateNewVelocities(p1, p2);
     }
 }
