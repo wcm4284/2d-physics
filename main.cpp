@@ -4,6 +4,8 @@
 #include "particle.h"
 #include "gravity_source.h"
 
+typedef unsigned int uint;
+
 float screenHeight = 2150;
 float screenWidth = 3850;
 float framerate = 60;
@@ -68,18 +70,19 @@ int main()
 
             }
 
-            // update vel and pos
+            // update velocity 
             *ptls[i].vel += (*ptls[i].acc * timestep);
 
             // check if velocity is greater than max, correct if so
             if (ptls[i].vel->x > maxVelocity) ptls[i].vel->x = maxVelocity;
             if (ptls[i].vel->y > maxVelocity) ptls[i].vel->y = maxVelocity;
 
+            // update position
             *ptls[i].pos += (*ptls[i].vel * timestep);
             ptls[i].drawable.setPosition(*ptls[i].pos);
 
-            // change color and draw
-            unsigned int shade = getMagnitude(*ptls[i].vel) / 2;
+            // change color based on velocity and draw
+            uint shade = getMagnitude(*ptls[i].vel) / 2;
             shade = shade > 255 ? 255 : shade;
             ptls[i].drawable.setFillColor(sf::Color(0, shade, (255 - shade), 255));
             window.draw(ptls[i].drawable);
