@@ -21,7 +21,7 @@ typedef struct {
 on the distance between dst and src
 no return, acceleration of dst is changed as a result
 implemented in gravity_source.cpp */
-void applyGravity(particle_t &dst, grav_source_t &src);
+void applyGravity(grav_source_t &src, particle_t &dst);
 
 /* function to detect collisions between two gravity sources
 returns true if a collision is detected, false otherwise

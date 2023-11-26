@@ -91,7 +91,7 @@ int main()
 
                 for (grav_source_t src : gsrcs) {
 
-                    applyGravity(ptls[i], src);
+                    applyGravity(src, ptls[i]);
 
                     resolveCollision(src, ptls[i]);
 

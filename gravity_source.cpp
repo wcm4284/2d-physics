@@ -3,7 +3,7 @@
 #include "gravity_source.h"
 
 
-void applyGravity(particle_t &dst, grav_source_t &src) {
+void applyGravity(grav_source_t &src, particle_t &dst) {
     float theta = atan2((src.pos->y - dst.pos->y), (src.pos->x - dst.pos->x));
     float force = universalGrav * src.im / pow(getDistance(*src.pos, *dst.pos), 2);
     dst.acc->x += force * cosf(theta);
