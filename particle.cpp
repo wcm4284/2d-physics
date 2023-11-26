@@ -43,32 +43,32 @@ void resolveParticleCollision(particle_t &p1, particle_t &p2) {
 
 void calculateNewVelocities(particle_t &p1, particle_t &p2) {
     float normal1, tangent1, normal2, tangent2; 
-        sf::Vector2f unitNormal = { p1.pos->x - p2.pos->x, p1.pos->y - p2.pos->y };
+    sf::Vector2f unitNormal = { p1.pos->x - p2.pos->x, p1.pos->y - p2.pos->y };
 
-        unitNormal /= getMagnitude(unitNormal);
+    unitNormal /= getMagnitude(unitNormal);
 
-        sf::Vector2f unitTangent = {-unitNormal.y, unitNormal.x};
+    sf::Vector2f unitTangent = {-unitNormal.y, unitNormal.x};
 
-        normal1 = dotProduct(*p1.vel, unitNormal);
-        normal2 = dotProduct(*p2.vel, unitNormal);
-        tangent1 = dotProduct(*p1.vel, unitTangent);
-        tangent2 = dotProduct(*p2.vel, unitTangent); 
+    normal1 = dotProduct(*p1.vel, unitNormal);
+    normal2 = dotProduct(*p2.vel, unitNormal);
+    tangent1 = dotProduct(*p1.vel, unitTangent);
+    tangent2 = dotProduct(*p2.vel, unitTangent); 
 
-        float newNormal1, newNormal2; 
+    float newNormal1, newNormal2; 
 
-        newNormal1 = (normal1 * (p1.im - p2.im) + (2 * p2.im * normal2)) / (p1.im + p2.im);
-        newNormal2 = (normal2 * (p2.im - p1.im) + (2 * p1.im * normal1)) / (p1.im + p2.im);
+    newNormal1 = (normal1 * (p1.im - p2.im) + (2 * p2.im * normal2)) / (p1.im + p2.im);
+    newNormal2 = (normal2 * (p2.im - p1.im) + (2 * p1.im * normal1)) / (p1.im + p2.im);
 
-        sf::Vector2f normalVec1, normalVec2, tangentVec1, tangentVec2;
+    sf::Vector2f normalVec1, normalVec2, tangentVec1, tangentVec2;
 
-        normalVec1 = {newNormal1 * unitNormal.x, newNormal1 * unitNormal.y};
-        normalVec2 = {newNormal2 * unitNormal.x, newNormal2 * unitNormal.y};
-        tangentVec1 = {tangent1 * unitTangent.x, tangent1 * unitTangent.y};
-        tangentVec2 = {tangent2 * unitTangent.x, tangent2 * unitTangent.y};
+    normalVec1 = {newNormal1 * unitNormal.x, newNormal1 * unitNormal.y};
+    normalVec2 = {newNormal2 * unitNormal.x, newNormal2 * unitNormal.y};
+    tangentVec1 = {tangent1 * unitTangent.x, tangent1 * unitTangent.y};
+    tangentVec2 = {tangent2 * unitTangent.x, tangent2 * unitTangent.y};
 
 
-        *p1.vel = normalVec1 + tangentVec1;
-        *p2.vel = normalVec2 + tangentVec2;
+    *p1.vel = normalVec1 + tangentVec1;
+    *p2.vel = normalVec2 + tangentVec2;
 }
 
 particle_t create(float x, float y, float mass, float radius) {
