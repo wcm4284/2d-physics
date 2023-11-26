@@ -89,8 +89,6 @@ int main()
 
                 *ptls[i].acc = {0, 0};
 
-                int j = 0;
-
                 for (grav_source_t src : gsrcs) {
 
                     applyGravity(ptls[i], src);
