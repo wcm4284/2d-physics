@@ -110,7 +110,7 @@ int main()
 
             // update position
             *ptls[i].pos += (*ptls[i].vel * timestep);
-            ptls[i].drawable.setPosition(*ptls[i].pos);
+            ptls[i].drawable.setPosition(ptls[i].pos->x - ptls[i].ir, ptls[i].pos->y - ptls[i].ir);
 
             // change color based on velocity and draw
             uint shade = getMagnitude(*ptls[i].vel) / 2;

@@ -21,7 +21,7 @@ grav_source_t create(const int x, const int y, float mass, float radius) {
     newSource.ir = radius;
     newSource.im = mass;
     newSource.drawable.setFillColor(sf::Color::Black);
-    newSource.drawable.setPosition(*newSource.pos);
+    newSource.drawable.setPosition(newSource.pos->x - radius, newSource.pos->y - radius);
     newSource.drawable.setRadius(newSource.ir);
 
     return newSource;
