@@ -23,14 +23,14 @@ float dotProduct(sf::Vector2f &vec1, sf::Vector2f &vec2) {
 }
 
 void resolveWallCollision(particle_t &p, const float offset) {
-    if (p.pos->x + p.ir > screenWidth - offset) {
+    if (p.pos->x + p.ir >= screenWidth - offset) {
         p.vel->x = -abs(p.vel->x);
-    } else if (p.pos->x - p.ir < offset) {
+    } else if (p.pos->x - p.ir <= offset) {
         p.vel->x = abs(p.vel->x);
     }
-    if (p.pos->y + p.ir > screenHeight - offset) {
+    if (p.pos->y + p.ir >= screenHeight - offset) {
         p.vel->y = -abs(p.vel->y);
-    } else if (p.pos->y - p.ir < offset) {
+    } else if (p.pos->y - p.ir <= offset) {
         p.vel->y = abs(p.vel->y);
     }
 }
