@@ -95,8 +95,9 @@ int main()
 
                     applyGravity(ptls[i], src);
 
+                    resolveCollision(src, ptls[i]);
+
                     // might as well draw while we are here
-                    // side effect of this is that if collision occur, this will be drawn under particles
                     window.draw(src.drawable);
                 }
             }
